@@ -25,6 +25,10 @@ class CalendarService
     const QUERYARG_DATE = 'CalendarDate';
     const QUERYARG_VIEW = 'CalendarView';
 
+    const MONTH = 'month';
+    const WEEK = 'week';
+    const MINI = "mini";
+
     private $viewsList = ['month', 'week'];
 
     private $twig;
