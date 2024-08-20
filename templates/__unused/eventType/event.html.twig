@@ -1,0 +1,13 @@
+{% if event.metadata.published %}
+	<div class="event relative group rounded {{event.metadata.full ? 'bg-slate-600' : 'bg-blue-500' }} text-white p-1">
+		<span class="text-sm text-white truncate flex-1">{{ event.metadata.cepage }}</span>
+		{% if event.metadata.commentVisible %}
+			<div class="text-white text-xs italic">
+				{{event.metadata.comment}}
+			</div>
+		{% endif %}
+	</div>
+	{# {% else %} #}
+{# <div class="bg-blue-300">Hidden #}
+	{# {{event.metadata.cepage}}</div> #}
+{% endif %}

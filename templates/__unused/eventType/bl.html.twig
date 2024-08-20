@@ -1,0 +1,42 @@
+{% if event.metadata.completeProcessRequired %}
+	{% set url = '/production/' %}
+{% endif %}
+
+<a href="{{event.metadata.url}}" id="user-event-{{event.metadata.id}}" class="convoc convoc-{{event.metadata.status}} text-slate-600 relative group rounded p-1 hover:shadow bg-gray-100 border border-gray-300">
+	<div class="text-sm truncate flex-1 flex justify-between items-center">Convocation
+		{% if event.metadata.status == 'pending' %}
+			<i class="text-lg fas fa-circle-plus text-blue-500"></i>
+		{% elseif event.metadata.status == 'accepted'%}
+			<i class="text-lg fas fa-circle-check text-green-500"></i>
+		{% elseif event.metadata.status == 'rejected'%}
+			<i class="text-lg fas fa-circle-xmark text-red-500"></i>
+		{% elseif event.metadata.status == 'changed'%}
+			<i class="text-lg fas fa-circle-question text-orange-500"></i>
+		{% elseif event.metadata.status == 'delivered'%}
+			{% if event.metadata.completeProcessRequired %}
+				<i class="text-lg fas fa-circle-question text-blue-500"></i>
+			{% else %}
+				<i class="text-lg fas fa-circle-check text-green-900"></i>
+			{% endif %}
+		{% elseif event.metadata.status == 'completed'%}
+			<i class="text-lg fas fa-check text-stone-500"></i>
+		{% endif %}
+	</div>
+	<p class="text-xs pb-1">
+		{{ event.metadata.parcelle }}
+	</p>
+	{% if event.metadata.status != 'rejected' %}
+		<div class="text-xs bg-white rounded p-1 text-slate-500">
+			<p>
+				{{event.metadata.quantiteDemandee/1000}}
+				Tonnes
+			</p>
+			<p>
+				de
+				{{event.start|date('H:i')}}
+				à
+				{{event.end|date('H:i')}}
+			</p>
+		</div>
+	{% endif %}
+</a>

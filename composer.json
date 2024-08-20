@@ -1,0 +1,23 @@
+{
+    "name" : "agantarcom/calendar-bundle",
+    "description" : "A simple PHP calendar bundle for Symfony",
+    "type" : "symfony-bundle",
+    "license" : "MIT",
+    "version": "1.0.0",
+    "require": {
+        "php": ">=7.4",
+        "symfony/framework-bundle": "^7.0",
+        "symfony/twig-bundle": "^5.4|^6.0|^7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "AgantarCom\\CalendarBundle\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Gabriel Conrairie",
+            "email": "graab@graab.fr"
+        }
+    ]
+}

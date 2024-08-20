@@ -1,0 +1,31 @@
+<div class="border border-1 border-gray-200 {{ ( nextMonth or lastMonth ) ? 'opacity-60 bg-gray-50' : ''}}">
+
+	<div class="text-right text-xs p-1 pb-0">
+		<span class="{{isPresent ? 'bg-yellow-200' : 'bg-white text-slate-500'}} p-1 rounded-full">
+			{{ date|date('d') }}
+		</span>
+	</div>
+
+	<div class="">
+
+		<div class="calendar-bundle-events grid grid-rows-2 h-full ">
+
+			<div class="calendar-bundle-event-am border-b border-dashed border-gray-200 min-h-24 h-fit p-2">
+				{% for event in events %}
+					{% if event.start|date('H') < 12 %}
+						{% include "@Calendar/components/event.html.twig" with event.toArray %}
+					{% endif %}
+				{% endfor %}
+			</div>
+			<div class="calendar-bundle-event-pm min-h-24 h-fit p-2">
+				{% for event in events %}
+					{% if event.start|date('H') >= 12 %}
+						{% include "@Calendar/components/event.html.twig" with event.toArray %}
+					{% endif %}
+				{% endfor %}
+
+			</div>
+
+		</div>
+	</div>
+</div>

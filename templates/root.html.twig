@@ -1,0 +1,11 @@
+<div class="text-xs bg-gray-900 text-lime-300 p-1 mb-4 rounded empty:hidden w-fit">{{calendar.template ?? ''}}</div>
+
+<div class="calendar-bundle">
+	{% block calendarContent %}
+		{# Calendar Content #}
+	{% endblock %}
+</div>
+
+<pre>
+	{{ dump(calendar) }}
+</pre>
