@@ -3,7 +3,7 @@ services:
     autowire: true
     autoconfigure: true
 
-  AgantarCom\CalendarBundle\Service\CalendarService: ~
+  AgantarCom\CalendarBundle\Service\CalendarBundleService: ~
   AgantarCom\CalendarBundle\Model\CalendarEvent: ~
   AgantarCom\CalendarBundle\Twig\CalendarBundleExtension:
     tags:
