@@ -33,6 +33,6 @@ in the `config/bundles.php` file of your project:
 
 return [
     // ...
-    AgantarCom\CalendarBundle\CalendarBundleService::class => ['all' => true],
+    AgantarCom\CalendarBundle\CalendarBundle::class => ['all' => true],
 ];
 ```
