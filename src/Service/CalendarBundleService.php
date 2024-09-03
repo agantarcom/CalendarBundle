@@ -21,6 +21,7 @@ use Twig\Markup;
  * ]
  */
 class CalendarBundleService
+
 {
     const QUERYARG_DATE = 'CalendarDate';
     const QUERYARG_VIEW = 'CalendarView';
