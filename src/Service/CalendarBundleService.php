@@ -20,7 +20,7 @@ use Twig\Markup;
  *      metadata => [ ... any custom data ]
  * ]
  */
-class CalendarService
+class CalendarBundleService
 {
     const QUERYARG_DATE = 'CalendarDate';
     const QUERYARG_VIEW = 'CalendarView';
