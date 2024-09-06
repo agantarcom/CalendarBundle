@@ -1,0 +1,45 @@
+{# CALENDAR TOOLBAR #}
+<style>
+	.calendar-toolbar {
+		position: relative;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.2rem 0;
+	}
+
+	.calendar-nav-date {
+		font-size: 1rem;
+		font-weight: 500;
+		flex-grow: 1;
+		text-align: center;
+	}
+
+	.calendar-today {
+		background-color: #3b82f6;
+		color: white;
+		border-radius: 0.25rem;
+		font-size: 0.70em;
+		padding: 0.3em 0.7em;
+	}
+</style>
+
+<div class="calendar-toolbar">
+
+	{% block navigation %}
+		{% include "@Calendar/components/navbar/buttons.html.twig" %}
+	{% endblock %}
+
+	<div class="calendar-nav-date">
+		{{mois(date)}}
+		{{ date|date('y') }}
+	</div>
+
+	<a href="{{ navigation.today }}" class="calendar-today">Aujourd'hui</a>
+
+	{% block filters %}
+		{# {% if hasFilters ?? null %}{% include "@Calendar/components/navbar/filters.html.twig" %}{% endif %} #}
+	{% endblock %}
+
+</div>

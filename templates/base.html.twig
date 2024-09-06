@@ -1,0 +1,12 @@
+{% set cssFile = config.minified ? '-mini' : '' %}
+{% set calendarView = config.minified ? 'mini' : view %}
+
+<div id="calendar-bundle">
+	{% include "@Calendar/views/" ~ calendarView ~ ".html.twig" %}
+</div>
+
+<style>
+	@import url("{{ asset('bundles/calendar/calendar-bundle' ~ cssFile ~ '.css') }}");
+	@import url("{{ asset('bundles/calendar/calendar-bundle-common.css') }}");
+</style>
+<script src="{{asset('bundles/calendar/app.js')}}" defer></script>

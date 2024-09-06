@@ -1,12 +1,7 @@
-<div id="calendar-bundle-event-{{ id}}" class="calendar-event text-sm px-3 py-1 rounded-lg h-fit {{ cssClass ?? 'bg-blue-500 text-white'}}">
+<div id="calendar-bundle-event-{{id}}" class="calendar-event {{ cssClass }}" style="{{ style }}">
+	<span class="time">
+		{{start|date("H\\H")}}
+	</span>
 	{{title}}
-	{% if not folded %}
-		<div class="text-xs">
-			{{start|date('d/m/Y H:i:s')}}
-		{{end|date('d/m/Y H:i:s')}}
-
-		{% if allDay %}
-			- Journée entière
-		{% endif %}
-	</div>
-{% endif %}</div>
+	{{ description ?? '' }}
+</div>

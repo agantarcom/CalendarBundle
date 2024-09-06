@@ -1,0 +1,247 @@
+/* CalendarBundle CSS Class */
+.calendar-full {
+    padding: 0.85em;
+    margin: auto;
+    max-width: 1400px;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    max-width: 1400px;
+}
+
+.calendar-weekday {
+    font-size: 0.85em;
+    text-align: center;
+    padding: 0.85em;
+}
+
+.calendar-mini {
+    padding: 0.85em;
+    margin: auto;
+    max-width: fit-content;
+}
+
+.calendar-mini .grid{
+    margin: 0 auto;
+    width: fit-content;
+    display: grid;
+    grid-template-columns: repeat(7, 2.5rem);
+}
+
+.calendar-mini .weekday {
+    font-size: 0.75em;
+    text-align: center;
+    padding: 0.5em;
+}
+
+
+
+
+/* NAVBAR */
+
+
+.calendar-navbar {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.calendar-nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.calendar-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 100%;
+    background-color: #ddd;
+    padding: 0.25rem;
+    color: inherit;
+    transition: background-color 0.2s, color 0.2s;
+}
+.calendar-btn svg {
+    width: 1rem;
+    height: 1rem;
+    fill: #777;
+}
+
+.calendar-btn:hover {
+    background-color: #3b82f6;
+    color: white;
+}
+.calendar-btn:hover svg {
+    fill: white;
+}
+
+.calendar-nav-date {
+    font-size: 1.25rem;
+    font-weight: 500;
+    flex-grow: 1;
+    text-align: center;
+}
+
+.calendar-today {
+    background-color: #3b82f6;
+    color: white;
+    border-radius: 0.25rem;
+    font-size: 0.85em;
+    padding: 0.5em 0.85em;
+}
+.calendar-view-btn {
+    padding: 0.5rem;
+    border: 1px solid #333;
+    border-radius: 0.25rem;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #eee;
+    font-size: 0.75em;
+    color: #333;
+}
+
+.calendar-view-btn.active {
+    color: #3b82f6;
+    border-color: #3b82f6;
+    box-shadow: 2px 2px 5px 0 rgba(0, 0, 0, 0.1);
+}
+
+
+/* BUTTONS */
+.calendar-nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.calendar-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 100%;
+    background-color: #ddd;
+    padding: 0.25rem;
+    color: inherit;
+    transition: background-color 0.2s, color 0.2s;
+}
+.calendar-btn svg {
+    width: 1rem;
+    height: 1rem;
+    fill: #777;
+}
+
+.calendar-btn:hover {
+    background-color: #3b82f6;
+    color: white;
+}
+.calendar-btn:hover svg {
+    fill: white;
+}
+
+
+/* DAY */
+.calendar-day {
+    border-left: 1px solid #ddd;
+    border-top: 1px solid #ddd;
+    position: relative;
+    overflow: hidden;
+}
+
+.calendar-day:nth-child(7n) {
+    border-right: 1px solid #ddd;
+}
+
+.calendar-day:nth-last-child(-n+7) {
+    border-bottom: 1px solid #ddd;
+}
+
+
+
+.view-week .calendar-day {
+    margin: 0.3rem;
+    border-radius: 0.25rem;
+}
+
+.calendar-day.present {
+    border: 1px solid #3b82f6;
+    box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.1);
+}
+
+.calendar-day.out {
+    opacity: 0.6;
+    background: repeating-linear-gradient(-45deg,#eee, #eee 1px, transparent 3px, transparent 20px);
+}
+
+.calendar-day-header {
+    text-align: left;
+    font-size: 0.7em;
+    padding: 0.3rem 0.2rem;
+}
+
+.calendar-day.present .calendar-day-number{
+    color: white;
+    background-color: #3b82f6;
+    padding: .2rem;
+    border-radius: 50%;
+}
+
+.calendar-bundle-events {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    height: fit-content;
+}
+
+.calendar-bundle-event {
+    padding: 0.5rem;
+    min-height: 6rem;
+    height: fit-content;
+}
+
+.calendar-bundle-event.bottom-line {
+    border-bottom: 1px dashed #ddd;
+}
+
+.calendar-timeblock {
+    border-bottom: 1px solid #ddd;
+    font-size: 0.75rem;
+    padding: 0.25rem;
+    color: #999;
+}
+
+.calendar-timeblock:nth-child(odd) {
+    background-color: #eee;
+}
+
+.calendar-event {
+    background-color: #3b82f6;
+    color: white;
+    height: fit-content;
+    border-radius: 0.2rem;
+    font-size: 0.85rem;
+    padding: 0.1rem 0.25rem;
+    margin: .3rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.calendar-event .time{
+    font-size: 0.85em;
+    line-height: 0.85rem;
+    padding-right: .25rem;
+}
+
+.view-month {
+    min-height: 10rem;
+}

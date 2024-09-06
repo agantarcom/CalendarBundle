@@ -1,18 +1,18 @@
 {% block grid %}
-	<div class="calendar-mini">
+	<div class="calendar-full view-{{ view }}">
 
 		{% block navbar %}
-			{% include "@Calendar/components/navbar/navbar-mini.html.twig" with calendar %}
+			{% include "@Calendar/components/navbar/navbar.html.twig" with calendar %}
 		{% endblock %}
 
-		<div class="grid">
+		<div class="calendar-grid">
 			{% block content %}
 
 				{% block weekdays %}
 					{% for d in calendar.weekdays %}
-						<div class="weekday">
+						<div class="calendar-weekday">
 							{% block day %}
-								{{d|slice(0,1)}}
+								{{d}}
 							{% endblock %}
 						</div>
 					{% endfor %}
@@ -20,12 +20,20 @@
 
 				{% block calendar %}
 					{% for day in calendar.calendar %}
-						{% include "@Calendar/components/day-mini.html.twig" with day %}
+						{{ templates.day}}
 					{% endfor %}
 				{% endblock %}
 
 			{% endblock %}
 		</div>
 
+
+		<pre>
+	{{ dump(templates) }}
+</pre>
+
+		{# {{ templates.legend ?? null }} #}
 	</div>
+
+
 {% endblock %}

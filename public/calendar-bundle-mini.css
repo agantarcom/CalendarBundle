@@ -1,0 +1,20 @@
+/* CalendarBundle CSS Class */
+.calendar-mini {
+    padding: 0.85em;
+    margin: auto;
+    max-width: fit-content;
+}
+
+.calendar-mini .grid{
+    margin: 0 auto;
+    width: fit-content;
+    display: grid;
+    grid-template-columns: repeat(7, 2.5rem);
+}
+
+.calendar-mini .weekday {
+    font-size: 0.75em;
+    text-align: center;
+    padding: 0.5em;
+}
+
