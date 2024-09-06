@@ -2,9 +2,19 @@
 
 namespace AgantarCom\CalendarBundle\Service;
 
-use Symfony\Component\HttpFoundation\RequestStack;
-use Twig\Environment;
 use Twig\Markup;
+use Twig\Environment;
+
+use AgantarCom\CalendarBundle\Model\DayModel;
+use AgantarCom\CalendarBundle\Trait\DataTrait;
+use AgantarCom\CalendarBundle\Trait\ViewTrait;
+use AgantarCom\CalendarBundle\Trait\EventTrait;
+use AgantarCom\CalendarBundle\Trait\ConfigTrait;
+
+use AgantarCom\CalendarBundle\Trait\TemplateTrait;
+use Symfony\Component\HttpFoundation\RequestStack;
+use AgantarCom\CalendarBundle\Config\CalendarConfig;
+use AgantarCom\CalendarBundle\Config\TemplateConfig;
 
 /**
  * Class CalendarService.
@@ -21,192 +31,59 @@ use Twig\Markup;
  * ]
  */
 class CalendarBundleService
-
 {
+    use ViewTrait;
+    use DataTrait;
+    use EventTrait;
+    use ConfigTrait;
+    use TemplateTrait;
+
     const QUERYARG_DATE = 'CalendarDate';
     const QUERYARG_VIEW = 'CalendarView';
 
-    const MONTH = 'month';
-    const WEEK = 'week';
-    const MINI = "mini";
-
-    private $viewsList = ['month', 'week'];
-
     private $twig;
 
-    private $view;
     private $date;
     private $month;
-    private $data;
-    private $events;
 
-    public function __construct(Environment $twig, private RequestStack $requestStack)
-    {
+    public function __construct(
+        Environment $twig,
+        private RequestStack $requestStack,
+    ) {
         $this->twig = $twig;
+        $this->config = new CalendarConfig();
+        $this->templates = new TemplateConfig($twig);
     }
 
+    /**
+     * Creates a new instance of the CalendarBundleService class.
+     *
+     * @param \DateTime $date The date to use for creating the instance. Defaults to the current date and time.
+     *
+     * @return static The newly created instance of the CalendarBundleService class.
+     */
     public function create(\DateTime $date = new \DateTime()): static
     {
         $queryDate = $this->requestStack->getCurrentRequest()->query->get(self::QUERYARG_DATE);
         $queryView = $this->requestStack->getCurrentRequest()->query->get(self::QUERYARG_VIEW);
+        $this->setView($queryView);
 
         $date = $queryDate ? new \DateTime($queryDate) : new \DateTime();
-        $this->setDate($date);
-        // Default view
-        $this->view = $queryView ? $queryView : 'month';
+        $this->setDate(new \DateTimeImmutable($date->format('Y-m-d')));
+
         return $this;
     }
 
     /**
      * Sets the date for the CalendarService.
      *
-     * @param \DateTime $date the date to set
+     * @param \DateTimeImmutable $date the date to set
      */
-    private function setDate(\DateTime $date): void
+    private function setDate(\DateTimeImmutable $date): void
     {
         $this->date = $date;
         $this->month = $date->format('m');
         $this->setData($date);
-    }
-
-    /**
-     * Sets the data for the given date.
-     *
-     * @param \DateTime $date the date to set the data for
-     */
-    private function setData(\DateTime $date): void
-    {
-        $data = [];
-        $d = clone $date;
-        $data['weekDays'] = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
-
-        $week = [
-            'current' => $d->format('W'),
-            'last' => $d->modify('-1 week')->format('Y-m-d'),
-            'next' => $d->modify('+2 week')->format('Y-m-d'),
-        ];
-
-        $d->modify('first day of this month');
-        $month = [
-            'current' => $d->format('Y-m-d'),
-            'last' => $d->modify('-1 month')->format('Y-m-d'),
-            'next' => $d->modify('+2 month')->format('Y-m-d'),
-        ];
-
-        $data['dates'] = [
-            'dateTime' => $date,
-            'now' => $date->format('Y-m-d'),
-            'weeks' => $week,
-            'months' => $month,
-        ];
-
-        // Views
-        foreach ($this->viewsList as $view) {
-            $data['views'][$view] = $this->createUri(self::QUERYARG_VIEW, $view !== 'month' ? $view : null);
-        }
-
-        $data['navigation'] = [
-            'today' => $this->createUri(self::QUERYARG_DATE),
-            'previewPage' => $this->createUri(self::QUERYARG_DATE, $month['last']),
-            'nextPage' => $this->createUri(self::QUERYARG_DATE, $month['next']),
-            'views' => $data['views'],
-        ];
-
-
-
-        // Remove any date query parameter
-        $data['requestUri'] = preg_replace('/&?date=[0-9]{4}-[0-9]{2}-[0-9]{2}/', '', $this->requestStack->getCurrentRequest()->getRequestUri());
-        $this->data = $data;
-    }
-
-
-    public function setView(string $viewType): static
-    {
-        if (!in_array($viewType, $this->viewsList)) {
-            throw new \InvalidArgumentException('Invalid view');
-        }
-
-        // Retrieve queried view
-        $queryView = $this->requestStack->getCurrentRequest()->query->get(self::QUERYARG_VIEW);
-
-        $this->view = $queryView ?? $viewType;
-
-        if ($viewType === 'week') {
-            $this->data['navigation']['previewPage'] = $this->createUri(self::QUERYARG_DATE, $this->data['dates']['weeks']['last']);
-            $this->data['navigation']['nextPage'] = $this->createUri(self::QUERYARG_DATE, $this->data['dates']['weeks']['next']);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Renders the calendar.
-     *
-     * @return array the rendered calendar data
-     */
-    public function get(): array
-    {
-        // Get days for the view
-        $days = call_user_func([$this, 'getDaysIn' . ucfirst($this->view)]);
-
-        $calendar = [];
-        foreach ($days as $day) {
-            $calendar[] = $this->setDay($day);
-        }
-
-        return [
-            ...$this->data,
-            'calendar' => $calendar,
-        ];
-    }
-
-    private function createDateUri(string $date = null): string
-    {
-        // Get the current request URI
-        $defaultUri = $this->requestStack->getCurrentRequest()->getRequestUri();
-
-        // Clean up any existing date query parameter
-        $defaultUri = preg_replace('/[&\?]' . self::QUERYARG_DATE . '=[\d-]{0,10}/', '', $defaultUri);
-
-        // Create the query arg
-        if ($date) {
-            // Add Query arg as new or append to existing query args
-            $calendarQueryArg = strpos($defaultUri, '?') ? '&' : '?';
-            $calendarQueryArg .= self::QUERYARG_DATE . "=" . $date;
-        }
-        return $defaultUri . ($calendarQueryArg ?? '');
-    }
-
-    private function createUri(string $qArg, string $value = null): string
-    {
-        // Get the current request URI
-        $defaultUri = $this->requestStack->getCurrentRequest()->getRequestUri();
-
-        // Clean up any existing date query parameter
-        // $defaultUri = preg_replace('/[&\?]' . self::QUERYARG_DATE . '=[\d-]{0,10}/', '', $defaultUri);
-        $defaultUri = preg_replace('/[&\?]' . $qArg . '=[^&]*/', '', $defaultUri);
-
-        // Create the query arg
-        if ($value) {
-            // Add Query arg as new or append to existing query args
-            $calendarQueryArg = strpos($defaultUri, '?') ? '&' : '?';
-            $calendarQueryArg .= $qArg . "=" . $value;
-        }
-        return $defaultUri . ($calendarQueryArg ?? '');
-    }
-
-
-    /**
-     * Sets the events for the calendar service.
-     *
-     * @param array $events an array of events to be set
-     *
-     * @return CalendarService the updated CalendarService instance
-     */
-    public function setEvents(array $events): CalendarService
-    {
-        $this->events = $events;
-        return $this;
     }
 
     /**
@@ -216,45 +93,36 @@ class CalendarBundleService
      *
      * @return array the Days data
      */
-    private function setDay(string $d): array
+    private function setDay(string $d): DayModel
     {
         $now = (new \DateTime())->setTime(0, 0, 0);
         $date = new \DateTime($d);
-        $day = [
-            'date' => $date,
-            'dayNumberInWeek' => $date->format('N'),
-            'isPast' => $date < $now,
-            'isPresent' => $date->format('d-m-Y') == $now->format('d-m-Y'),
-            'isFuture' => $date > $now,
-            'lastMonth' => $date->format('m') < $this->month,
-            'nextMonth' => $date->format('m') > $this->month,
-            'events' => $this->getEvents($date),
-        ];
+
+        $day = new DayModel();
+        $day->setDate($d);
+        $day->setDayNumberInWeek($date->format('N'));
+        $day->setPast($date < $now);
+        $day->setPresent($date->format('d-m-Y') == $now->format('d-m-Y'));
+        $day->setFuture($date > $now);
+        $day->setLastMonth($date->format('m') < $this->month);
+        $day->setNextMonth($date->format('m') > $this->month);
+        $day->setEvents($this->getEvents($date));
+        $day->setTimeblock($this->config->getTimeblock());
+
+        // $day->$day = [
+        //         'date' => $date,
+        //         'dayNumberInWeek' => $date->format('N'),
+        //         'isPast' => $date < $now,
+        //         'isPresent' => $date->format('d-m-Y') == $now->format('d-m-Y'),
+        //         'isFuture' => $date > $now,
+        //         'lastMonth' => $date->format('m') < $this->month,
+        //         'nextMonth' => $date->format('m') > $this->month,
+        //         'events' => $this->getEvents($date),
+        //     ];
 
         return $day;
     }
 
-    /**
-     * Retrieves events for a given date.
-     *
-     * @param \DateTime $date the date for which to retrieve events
-     *
-     * @return array an array of events for the given date
-     */
-    private function getEvents(\DateTime $date): array
-    {
-        if (!$this->events || 0 == count($this->events)) {
-            return [];
-        }
-        $events = [];
-        foreach ($this->events as $event) {
-            if ($event->getDate() == $date) {
-                $events[] = $event;
-            }
-        }
-
-        return $events;
-    }
 
     /**
      * Retrieves the days in the month for the given date.
@@ -342,14 +210,46 @@ class CalendarBundleService
         }
     }
 
+    /**
+     * Renders the calendar.
+     *
+     * @return array the rendered calendar data
+     */
+    public function get(): array
+    {
+        // Get days for the view
+        $days = call_user_func([$this, 'getDaysIn' . ucfirst($this->view)]);
+
+        $calendar = [];
+        foreach ($days as $day) {
+            $calendar[] = $this->setDay($day);
+        }
+
+        return [
+            ...$this->data,
+            'calendar' => $calendar,
+        ];
+    }
+
+    /**
+     * Renders the calendar.
+     *
+     * @return Markup the rendered calendar
+     */
     public function render(): Markup
     {
-        $template = "@Calendar/views/" . $this->view . ".html.twig";
-        $this->data['template'] = $template;
-        $html = $this->twig->render($template, [
+        $this->debug();
+        $html = $this->twig->render("@Calendar/base.html.twig", [
             'calendar' => $this->get(),
             'view' => $this->view,
+            'config' => $this->config,
+            'templates' => $this->templates,
         ]);
         return new Markup($html, 'UTF-8');
+    }
+
+    public function debug(): void
+    {
+        dump($this);
     }
 }

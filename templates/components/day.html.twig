@@ -1,31 +1,62 @@
-<div class="border border-1 border-gray-200 {{ ( nextMonth or lastMonth ) ? 'opacity-60 bg-gray-50' : ''}}">
+<div class="calendar-day {{ ( day.nextMonth or day.lastMonth ) ? 'out' : ''}} {{ day.isPresent ? 'present' : '' }}  view-{{ view }}">
 
-	<div class="text-right text-xs p-1 pb-0">
-		<span class="{{isPresent ? 'bg-yellow-200' : 'bg-white text-slate-500'}} p-1 rounded-full">
-			{{ date|date('d') }}
-		</span>
-	</div>
+	{% block dayHeader %}
+		<div class="calendar-day-header">
+			<span class="calendar-day-number">
+				{{ day.date|date('d') }}
+			</span>
+		</div>
+	{% endblock %}
+
+	{% block dayContent %}
 
 	<div class="">
 
-		<div class="calendar-bundle-events grid grid-rows-2 h-full ">
+		{% if templates.content %}
+			{{ templates.content }}
+		{% endif %}
 
-			<div class="calendar-bundle-event-am border-b border-dashed border-gray-200 min-h-24 h-fit p-2">
-				{% for event in events %}
-					{% if event.start|date('H') < 12 %}
-						{% include "@Calendar/components/event.html.twig" with event.toArray %}
-					{% endif %}
-				{% endfor %}
-			</div>
-			<div class="calendar-bundle-event-pm min-h-24 h-fit p-2">
-				{% for event in events %}
-					{% if event.start|date('H') >= 12 %}
-						{% include "@Calendar/components/event.html.twig" with event.toArray %}
-					{% endif %}
-				{% endfor %}
 
-			</div>
+		{% if view == 'month' %}
+			{% for event in day.events %}
+				{% include templates.event with event.toArray %}
+			{% endfor %}
+		{% else %}
+			{% if config.timeVisible %}
+				<div class="timeblocks">
+					{% for time in config.timeblocks %}
+						<div id="time-{{day.date|date('Y-m-d')}}-{{time}}" class="calendar-timeblock">
+							{{ time }}
+						</div>
+					{% endfor %}
+				</div>
+			{% endif %}
+		{% endif %}
 
+
+		{# <div class="calendar-bundle-events">
+
+				{% block dayAM %}
+					<div class="calendar-bundle-event bottom-line">
+						{% for event in events %}
+							{% if event.start|date('H') < 12 %}
+								{% include eventTemplate with event.toArray %}
+							{% endif %}
+						{% endfor %}
+					</div>
+				{% endblock %}
+
+				{% block dayPM %}
+					<div class="calendar-bundle-event">
+						{% for event in events %}
+							{% if event.start|date('H') >= 12 %}
+								{% include eventTemplate with event.toArray %}
+							{% endif %}
+						{% endfor %}
+					</div>
+				{% endblock %}
+
+			</div> #}
 		</div>
-	</div>
+	{% endblock %}
 </div>

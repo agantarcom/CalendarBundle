@@ -1,40 +1,29 @@
-{# CALENDAR TOOLBAR #}
-<div class="relative agcal-toolbar flex justify-between items-center gap-x-2 py-4">
+<div class="calendar-navbar">
 
-	<div class="flex justify-between items-center gap-x-4">
-		<a href="{{ navigation.previewPage}}" class="group h-6 w-6 rounded-full text-sm text-center bg-gray-200 p-1 hover:bg-blue-500 transition">
-			<svg
-				xmlns="http://www.w3.org/2000/svg" viewbox="0 0 320 512" class="w-full h-full fill-gray-500 group-hover:fill-white">
-				<!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
-				<path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 246.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192z"/>
+	{% block navigation %}
+		{% include "@Calendar/components/navbar/buttons.html.twig" %}
+	{% endblock %}
 
-			</svg>
-		</a>
+	{% block date %}
+		<div class="calendar-nav-date">
+			{% if view == 'week' %}
+				Semaine
+				{{ date|date('W') }}
+				-
+			{% endif %}
+			{{mois(date, true)}}
+		</div>
+	{% endblock %}
 
-		<a href="{{ navigation.nextPage}}" class="group h-6 w-6 rounded-full text-sm text-center bg-gray-200 p-1 hover:bg-blue-500 transition">
-			<svg
-				xmlns="http://www.w3.org/2000/svg" viewbox="0 0 320 512" class="w-full h-full fill-gray-500 group-hover:fill-white">
-				<!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
-				<path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z"/>
-			</svg>
-		</a>
-	</div>
+	{% block views %}
+		<a href="{{ navigation.today }}" class="calendar-today">Aujourd'hui</a>
+		<a href="{{ navigation.weekView}}" class="calendar-view-btn {{ view == 'week' ? 'active' : '' }}">Semaine</a>
+		<a href="{{ navigation.monthView}}" class="calendar-view-btn p-2 rounded text-xs border-1 {{ view == 'month' ? 'active' : '' }}">Mois</a>
+		{# <a href="" class="calendar-view-btn p-2 rounded text-xs border-1 {{ view == 'list' ? 'active' : '' }}">Liste</a> #}
+	{% endblock %}
 
-	<div class="agcal-date text-xl font-medium flex-1 text-center">
-		{% if view == 'week' %}
-			Semaine
-			{{ dates.weeks.current }}
-			-
-		{% endif %}
-		{{mois(dates.dateTime, true)}}
-	</div>
+	{% block filters %}
+		{# {% if hasFilters ?? null %}{% include "@Calendar/components/navbar/filters.html.twig" %}{% endif %} #}
+	{% endblock %}
 
-	<a href="{{ navigation.today }}" class="agcal-today bg-blue-500 text-white px-3 py-2 rounded text-sm">Aujourd'hui</a>
-
-	{% include "@Calendar/components/navbar/views.html.twig" %}
-
-
-	{% if hasFilters ?? null %}
-		{% include "@Calendar/components/navbar/filters.html.twig" %}
-	{% endif %}
 </div>

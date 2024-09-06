@@ -10,9 +10,12 @@ class CalendarEvent
     private $start;
     private $end;
     private $allDay;
-    private $cssClass;
     private $extendedProps;
+    private $timeblock;
+
     private $folded;
+    private $cssClass;
+    private $style;
 
     public function getId(): ?int
     {
@@ -115,7 +118,20 @@ class CalendarEvent
             'cssClass' => $this->cssClass,
             'extendedProps' => $this->extendedProps,
             'folded' => $this->folded,
+            'duration' => $this->getDuration(),
+            'style' => $this->getStyle(),
         ];
+    }
+
+    public function setStyle(?string $style): self
+    {
+        $this->style = $style;
+        return $this;
+    }
+
+    public function getStyle(): ?string
+    {
+        return $this->style;
     }
 
     public function setFolded(bool $folded): self
@@ -127,5 +143,23 @@ class CalendarEvent
     public function isFolded(): bool
     {
         return $this->folded;
+    }
+
+    public function setTimeblock(int $timeblock): self
+    {
+        $this->timeblock = $timeblock;
+        return $this;
+    }
+
+    public function getDuration(): int
+    {
+        $seconds = $this->end->getTimestamp() - $this->start->getTimestamp();
+        $minutes = $seconds / 60;
+        return $minutes;
+    }
+
+    public function getTimeblockSize(): int
+    {
+        return $this->getDuration() / $this->timeblock;
     }
 }

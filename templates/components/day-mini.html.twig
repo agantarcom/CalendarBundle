@@ -1,0 +1,56 @@
+<style>
+	.calendar-day {
+		border: 1px solid #ddd;
+		height: 2.7rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: #666;
+		font-size: 0.85rem;
+	}
+	.calendar-day.out {
+		opacity: 0.6;
+		background: repeating-linear-gradient(-45deg,#eee, #eee 1px, transparent 3px, transparent 10px);
+	}
+
+	.calendar-day-header {
+		text-align: right;
+		font-size: 0.7em;
+		padding: 0.25rem 0.25rem 0;
+	}
+
+	.calendar-day-number {
+		background-color: white;
+		padding: 0.25rem;
+		color: #333;
+		border-radius: 100%;
+	}
+	.calendar-event-mini {
+		background: #3b82f6;
+		border-radius: 50%;
+		color: white;
+		display: flex;
+		width: 2rem;
+		height: 2rem;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+	}
+	.calendar-event-present {
+		border: 2px solid #3b82f6;
+		color: #3b82f6;
+		font-weight: bold;
+		border-radius: 50%;
+		display: flex;
+		width: 2rem;
+		height: 2rem;
+		align-items: center;
+		justify-content: center;
+	}
+</style>
+
+<div class="calendar-day {{ ( nextMonth or lastMonth ) ? 'out' : ''}}">
+	<div class="calendar-event-{{isPresent ? 'present' : events ? 'mini' : ''}} {{ css.eventMini ?? ''}}">
+		{{ date|date('d') }}
+	</div>
+</div>
